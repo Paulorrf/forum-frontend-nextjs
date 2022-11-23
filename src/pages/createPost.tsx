@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { parseCookies } from "nookies";
 import validateToken from "../utils/validateToken";
 
-const createPost = () => {
+const CreatePost = () => {
+  const [error, setError] = useState(false);
+
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     const titulo = (event?.target as any).titulo.value;
     const mensagem = (event?.target as any).mensagem.value;
     const category = (event?.target as any).category.value;
+
+    if (titulo === "" || mensagem === "") {
+      setError(true);
+      return;
+    }
 
     const cookies = parseCookies();
 
@@ -36,6 +43,7 @@ const createPost = () => {
     });
 
     const data2 = await resp.json();
+    console.log(data2);
   };
 
   return (
@@ -53,6 +61,7 @@ const createPost = () => {
           </select>
         </div>
 
+        {error && <h2 className="text-error">Please enter all fields</h2>}
         <div>
           <input type="text" name="titulo" placeholder="titulo" />
         </div>
@@ -66,4 +75,4 @@ const createPost = () => {
   );
 };
 
-export default createPost;
+export default CreatePost;

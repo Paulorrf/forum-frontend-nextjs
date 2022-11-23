@@ -8,15 +8,23 @@ export default async function handler(
 ) {
   const { title, mensagem, email, category } = req.body;
 
-  const user = await prisma.users.findFirst({
+  //only gets id
+  const user = await prisma.users.findUnique({
     where: {
       email: email,
     },
+    select: {
+      id: true,
+    },
   });
 
+  //only gets id
   const categoryId = await prisma.category.findFirst({
     where: {
       name: category,
+    },
+    select: {
+      id: true,
     },
   });
 

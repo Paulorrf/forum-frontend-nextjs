@@ -14,7 +14,7 @@ module.exports = {
         textLight: "#000",
         mainDark: "#2a9d8f",
         mainLight: "#264653",
-        errorColor: "#e63946",
+        error: "#e63946",
       },
     },
   },
