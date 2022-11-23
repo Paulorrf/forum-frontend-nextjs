@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-}
+  env: {
+    SECRET_WORD: process.env.SECRET_WORD,
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
