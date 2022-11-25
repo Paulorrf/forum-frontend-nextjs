@@ -42,6 +42,13 @@ const Navbar = () => {
       >
         <Link href="/createPost">Create Post</Link>
       </li>
+      <li
+        className={`hover:underline ${
+          activeRoute == "posts" ? "underline" : ""
+        }`}
+      >
+        <Link href="/posts">Posts</Link>
+      </li>
 
       <li className="cursor-pointer" onClick={changeDarkMode}>
         change {darkMode[0] ? "dark" : "light"}

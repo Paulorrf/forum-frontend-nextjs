@@ -31,6 +31,7 @@ const Login = () => {
     });
 
     const userData = await resp.json();
+    console.log(userData);
 
     const token = createToken(userData);
 
