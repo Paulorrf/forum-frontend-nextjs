@@ -3,7 +3,49 @@ import { parseCookies } from "nookies";
 import validateToken from "../utils/validateToken";
 import Head from "next/head";
 
-const CreatePost = () => {
+import { withIronSessionSsr } from "iron-session/next";
+
+interface User {
+  email: String;
+}
+
+interface Props {
+  user: User;
+  isLogged: boolean;
+}
+
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req }: any) {
+    const user: User = req.session.user;
+
+    if (user?.email === undefined) {
+      return {
+        props: {
+          user: {},
+          isLogged: false,
+        },
+      };
+    }
+
+    return {
+      props: {
+        //@ts-ignore
+        user: req.session.user,
+        isLogged: true,
+      },
+    };
+  },
+  {
+    cookieName: "tk",
+    // @ts-ignore
+    password: process.env.SECRET_WORD,
+    cookieOptions: {
+      secure: false,
+    },
+  }
+);
+
+const CreatePost = ({ user, isLogged }: Props) => {
   const [error, setError] = useState(false);
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
@@ -20,15 +62,12 @@ const CreatePost = () => {
       return;
     }
 
-    const cookies = parseCookies();
-
-    const userInfo: any = validateToken(cookies.tk);
-
-    if (!userInfo || !userInfo.email) {
+    if (!user || !isLogged) {
+      console.log("nao ta logado");
       return;
     }
 
-    const email = userInfo.email;
+    const email = user.email;
 
     const data = {
       title: titulo,
@@ -70,6 +109,9 @@ const CreatePost = () => {
         </div>
 
         {error && <h2 className="text-error">Please enter all fields</h2>}
+        {!isLogged && (
+          <h2 className="text-error">You must login to create a post</h2>
+        )}
         <div>
           <input type="text" name="titulo" placeholder="titulo" />
         </div>

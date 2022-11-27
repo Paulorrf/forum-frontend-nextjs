@@ -8,6 +8,7 @@ export default async function handler(
 ) {
   let { id } = req.query;
 
+  //get post title, mensagem; comentario mensagem, id; user name
   const posts = await prisma.post.findFirst({
     where: {
       id: Number(id),
@@ -21,6 +22,12 @@ export default async function handler(
         select: {
           mensagem: true,
           id: true,
+
+          users: {
+            select: {
+              name: true,
+            },
+          },
         },
       },
     },

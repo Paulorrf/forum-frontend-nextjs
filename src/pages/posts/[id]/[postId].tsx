@@ -20,10 +20,10 @@ interface DataProps {
 interface ComentarioProps {
   id: Number;
   mensagem: String;
+  users: { name: String };
 }
 
 const post = ({ data: { data } }: any) => {
-  // console.log(data);
   return (
     <div>
       <div>
@@ -34,7 +34,10 @@ const post = ({ data: { data } }: any) => {
       <div>
         {data.comentario.map((comentario: ComentarioProps) => {
           return (
-            <div key={comentario.id.toString()}>{comentario.mensagem}</div>
+            <div key={comentario.id.toString()}>
+              <p>{comentario.mensagem}</p>
+              <p>{comentario.users.name}</p>
+            </div>
           );
         })}
       </div>

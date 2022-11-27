@@ -4,31 +4,46 @@ import bcrypt from "bcrypt";
 
 import prisma from "../../utils/prismaClient";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { email, password } = req.body;
+import { withIronSessionApiRoute } from "iron-session/next";
 
-  const user = await prisma.users.findFirst({
-    where: {
-      email: email,
-    },
-  });
+export default withIronSessionApiRoute(
+  async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
+    const { email, password } = req.body;
 
-  if (!user) {
-    res.status(400).json({ message: "user dont exist" });
-  } else {
-    bcrypt.compare(password, user?.password, function (err, result) {
-      if (result) {
-        res.status(200).json({ email });
-      } else {
-        res.status(400).json({ message: "wrong email or password" });
-      }
-
-      if (err) {
-        res.status(400).json({ message: err });
-      }
+    const user = await prisma.users.findFirst({
+      where: {
+        email: email,
+      },
     });
+
+    // get user from database then:
+    if (!user) {
+      res.status(400).json({ message: "user dont exist" });
+    } else {
+      bcrypt.compare(password, user?.password, async function (err, result) {
+        if (result) {
+          // @ts-ignore
+          req.session.user = {
+            email: email,
+          };
+          await req.session.save();
+          res.send({ ok: true });
+        } else {
+          res.send({ ok: false });
+        }
+
+        if (err) {
+          res.status(400).json({ message: err });
+        }
+      });
+    }
+  },
+  {
+    cookieName: "tk",
+    // @ts-ignore
+    password: process.env.SECRET_WORD,
+    cookieOptions: {
+      secure: false,
+    },
   }
-}
+);

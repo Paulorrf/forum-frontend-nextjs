@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+
   env: {
     SECRET_WORD: process.env.SECRET_WORD,
   },
