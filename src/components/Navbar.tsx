@@ -17,43 +17,47 @@ const Navbar = () => {
   };
 
   return (
-    <ul className="flex justify-between px-24 pt-2">
-      <li className={`hover:underline ${activeRoute == "" ? "underline" : ""}`}>
-        <Link href="/">Home</Link>
-      </li>
-      <li
-        className={`hover:underline ${
-          activeRoute == "login" ? "underline" : ""
-        }`}
-      >
-        <Link href="/login">Login</Link>
-      </li>
-      <li
-        className={`hover:underline ${
-          activeRoute == "register" ? "underline" : ""
-        }`}
-      >
-        <Link href="/register">Register</Link>
-      </li>
-      <li
-        className={`hover:underline ${
-          activeRoute == "createPost" ? "underline" : ""
-        }`}
-      >
-        <Link href="/createPost">Create Post</Link>
-      </li>
-      <li
-        className={`hover:underline ${
-          activeRoute == "posts" ? "underline" : ""
-        }`}
-      >
-        <Link href="/posts">Posts</Link>
-      </li>
+    <div>
+      <ul className="flex justify-between px-24 pt-2">
+        <li
+          className={`hover:underline ${activeRoute == "" ? "underline" : ""}`}
+        >
+          <Link href="/">Home</Link>
+        </li>
+        <li
+          className={`hover:underline ${
+            activeRoute == "login" ? "underline" : ""
+          }`}
+        >
+          <Link href="/login">Login</Link>
+        </li>
+        <li
+          className={`hover:underline ${
+            activeRoute == "register" ? "underline" : ""
+          }`}
+        >
+          <Link href="/register">Register</Link>
+        </li>
+        <li
+          className={`hover:underline ${
+            activeRoute == "createPost" ? "underline" : ""
+          }`}
+        >
+          <Link href="/createPost">Create Post</Link>
+        </li>
+        <li
+          className={`hover:underline ${
+            activeRoute == "posts" ? "underline" : ""
+          }`}
+        >
+          <Link href="/posts">Posts</Link>
+        </li>
 
-      <li className="cursor-pointer" onClick={changeDarkMode}>
-        change {darkMode[0] ? "dark" : "light"}
-      </li>
-    </ul>
+        <li className="cursor-pointer" onClick={changeDarkMode}>
+          change {darkMode[0] ? "dark" : "light"}
+        </li>
+      </ul>
+    </div>
   );
 };
 

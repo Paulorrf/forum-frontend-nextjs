@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components{
+    .inputStyle {
+        @apply rounded border border-textLight p-2 w-full dark:border-textDark
+    }
+
+    .btn {
+        @apply w-full rounded border border-textLight py-2 hover:border-textDark hover:bg-mainLight hover:text-textDark dark:border-textDark dark:hover:border-textLight dark:hover:bg-mainDark dark:hover:text-textLight
+    }
+
+    .title {
+        @apply text-3xl font-bold text-mainLight dark:text-mainDark
+    }
+
+    .center {
+        @apply absolute top-[40%] left-[50%] flex translate-x-[-40%] -translate-y-2/4 flex-col items-center justify-center
+    }
+}

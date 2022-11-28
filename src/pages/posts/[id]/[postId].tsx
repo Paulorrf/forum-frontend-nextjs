@@ -25,22 +25,24 @@ interface ComentarioProps {
 
 const post = ({ data: { data } }: any) => {
   return (
-    <div>
-      <div>
-        <h2>{data.title}</h2>
-        <p>{data.mensagem}</p>
+    <div className="mt-24 px-40">
+      <div className="mb-12 text-center">
+        <h2 className="title">{data.title.toUpperCase()}</h2>
+        <p className="text-xl">{data.mensagem}</p>
       </div>
 
-      <div>
-        {data.comentario.map((comentario: ComentarioProps) => {
-          return (
-            <div key={comentario.id.toString()}>
-              <p>{comentario.mensagem}</p>
-              <p>{comentario.users.name}</p>
-            </div>
-          );
-        })}
-      </div>
+      {data.comentario.length > 0 && (
+        <div className="mb-2 border-b border-lineColor border-[0.2] p-2">
+          {data.comentario.map((comentario: ComentarioProps) => {
+            return (
+              <div key={comentario.id.toString()}>
+                <p className="text-lg">{comentario.mensagem}</p>
+                <p className="text-right text-sm">{comentario.users.name}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

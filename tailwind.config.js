@@ -8,12 +8,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bgDark: "#264653",
+        bgDark: "#023047",
         bgLight: "#fff",
         textDark: "#fff",
         textLight: "#000",
-        mainDark: "#2a9d8f",
-        mainLight: "#264653",
+        mainDark: "#219ebc",
+        mainLight: "#e76f51",
+        lineColor: "#264653",
         error: "#e63946",
       },
     },

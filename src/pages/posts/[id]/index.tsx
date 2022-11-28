@@ -6,6 +6,26 @@ interface ParamsProps {
   params: { id: String };
 }
 
+interface PostProps {
+  category_id: Number;
+  id: Number;
+  mensagem: String;
+  title: String;
+  users_id: Number;
+}
+
+interface PostsProps {
+  posts: {
+    data: {
+      id: Number;
+      description: String;
+      name: String;
+      post: [PostProps];
+      postquantity: null;
+    };
+  };
+}
+
 export async function getStaticPaths() {
   return {
     paths: [
@@ -14,47 +34,52 @@ export async function getStaticPaths() {
       { params: { id: "lore" } },
       { params: { id: "off-topic" } },
     ],
-    fallback: false, // can also be true or 'blocking'
+    fallback: false,
   };
 }
 
-// `getStaticPaths` requires using `getStaticProps`
 export async function getStaticProps({ params }: ParamsProps) {
   try {
     const data = { id: params.id };
-    // console.log(data.id);
 
     const resp = await fetch(`http://localhost:3000/api/posts/${data.id}`);
 
     return {
-      // Passed to the page component as props
       props: { posts: await resp.json() },
     };
   } catch (error) {
     return {
-      // Passed to the page component as props
       props: { post: { data: "ocorreu um erro" } },
     };
   }
 }
 
-const Post = ({ posts }: any) => {
+function capitalizeFirst(words: Array<String>) {
+  return words.map((word) => {
+    return word.toUpperCase() + " ";
+  });
+}
+
+const Post = ({ posts }: PostsProps) => {
   const router = useRouter();
 
-  console.log();
+  let title = capitalizeFirst(posts.data.name.split("-"));
 
-  // console.log(posts.data.post);
   return (
-    <div className="text-[#fff]">
-      <h2>post</h2>
-      {posts.data.post.map((post: any) => {
+    <div className="mt-24 px-40">
+      <h2 className="title mb-4 text-center">{title}</h2>
+      {posts.data.post.map((post: PostProps) => {
         return (
-          <div key={post.id}>
-            <Link href={`${router.asPath}/${post.id}`}>
-              <p>{post?.title}</p>
-            </Link>
-            <p>{post?.mensagem}</p>
-            <div>-----------</div>
+          <div
+            key={post.id.toString()}
+            className="mb-2 border-b border-lineColor border-[0.2] p-2"
+          >
+            <div className="max-w-md cursor-pointer hover:underline">
+              <Link href={`${router.asPath}/${post.id}`}>
+                <p className="text-2xl">{post?.title}</p>
+              </Link>
+            </div>
+            <p className=" text-xl">{post?.mensagem}</p>
           </div>
         );
       })}

@@ -9,13 +9,11 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <Context.Provider value={[dark, setDark]}>
-      <div
-        className={`bg-[#0f0f0f] h-screen w-screen text-white ${
-          dark && "dark"
-        }`}
-      >
-        <Navbar />
-        <Component {...pageProps} />
+      <div className={`${dark && "dark"}`}>
+        <div className="dark:bg-bgDark bg-bgLight dark:text-textDark text-textLight h-screen w-screen">
+          <Navbar />
+          <Component {...pageProps} />
+        </div>
       </div>
     </Context.Provider>
   );
