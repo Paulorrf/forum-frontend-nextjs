@@ -1,12 +1,57 @@
 import Head from "next/head";
-import React, { useState } from "react";
-import createToken from "../utils/createToken";
-import { setCookie } from "nookies";
+import React, { useContext, useState } from "react";
 import { useRouter } from "next/router";
+import axios from "axios";
+import Context from "../context/context";
+
+interface Data {
+  data: {
+    email?: String;
+    isLogged: boolean;
+  };
+}
+
+export async function getServerSideProps({ req, res }: any) {
+  const cookies = req.headers.cookie || "";
+  // const token = jwt.decode(cookies.split("=")[1]);
+  const token = cookies.split("=")[1];
+
+  // const isValid = jwt.verify(cookies.split("=")[1])
+  const resp: Data = await axios.post(
+    "http://localhost:5000/verify-token",
+    { token: token },
+    {
+      withCredentials: true,
+      method: "POST",
+    }
+  );
+
+  console.log(resp.data);
+
+  if (resp.data.isLogged) {
+    console.log("daioshdoisahdiashdiasidhi");
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  }
+
+  return {
+    props: {
+      isLogged: resp.data.isLogged,
+      // isLogged: false,
+    },
+  };
+}
 
 const Login = () => {
   const [error, setError] = useState(false);
   const [showPass, setShowPass] = useState(false);
+
+  const darkModeAndCookie = useContext(Context);
 
   const router = useRouter();
 
@@ -26,21 +71,30 @@ const Login = () => {
       password,
     };
 
-    const resp = await fetch("/api/login", {
+    let headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Accept", "application/json");
+
+    // const resp = await fetch("http://localhost:5000/login", {
+    //   method: "POST",
+    //   mode: "cors",
+    //   // redirect: "follow",
+    //   credentials: "include", // Don't forget to specify this if you need cookies
+    //   headers: headers,
+    //   body: JSON.stringify(data),
+    // });
+    const resp: any = await axios.post("http://localhost:5000/login", data, {
+      withCredentials: true,
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
     });
 
-    const userData = await resp.json();
-
-    if (userData.ok) {
+    if (resp.status === 200) {
+      const changeHasCookie = darkModeAndCookie[3];
+      changeHasCookie(true);
       router.push("/");
-    } else {
-      setError(true);
     }
+
+    console.log(resp);
   };
 
   return (
@@ -76,10 +130,10 @@ const Login = () => {
               onChange={() => setShowPass((prev) => !prev)}
               className="mr-2"
               type="checkbox"
-              id="horns"
-              name="horns"
+              id="showPas"
+              name="showPas"
             />
-            <label htmlFor="horns">Show password</label>
+            <label htmlFor="showPas">Show password</label>
           </div>
         </div>
 

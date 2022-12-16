@@ -16,6 +16,7 @@ module.exports = {
         mainLight: "#e76f51",
         lineColor: "#264653",
         error: "#e63946",
+        bgModal: "rgba(0, 0, 0, 0.7)",
       },
     },
   },

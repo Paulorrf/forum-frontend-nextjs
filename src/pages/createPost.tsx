@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { parseCookies } from "nookies";
-import validateToken from "../utils/validateToken";
 import Head from "next/head";
-
-import { withIronSessionSsr } from "iron-session/next";
+import cookie from "cookie";
+import axios from "axios";
+import jwt from "jsonwebtoken";
+import Link from "next/link";
 
 interface User {
   email: String;
@@ -14,38 +14,42 @@ interface Props {
   isLogged: boolean;
 }
 
-export const getServerSideProps = withIronSessionSsr(
-  async function getServerSideProps({ req }: any) {
-    const user: User = req.session.user;
+export async function getServerSideProps({ req, res }: any) {
+  const cookies = req.headers.cookie;
+  // const token = jwt.decode(cookies.split("=")[1]);
+  const token = cookies?.split("=")[1];
 
-    if (user?.email === undefined) {
-      return {
-        props: {
-          user: {},
-          isLogged: false,
-        },
-      };
+  // const isValid = jwt.verify(cookies.split("=")[1])
+  const resp: any = await axios.post(
+    "http://localhost:5000/verify-token",
+    { token: token },
+    {
+      withCredentials: true,
+      method: "POST",
     }
+  );
 
+  console.log(resp.data);
+
+  if (!resp.data.isLogged) {
     return {
-      props: {
-        //@ts-ignore
-        user: req.session.user,
-        isLogged: true,
+      redirect: {
+        permanent: false,
+        destination: "/login",
       },
+      props: {},
     };
-  },
-  {
-    cookieName: "tk",
-    // @ts-ignore
-    password: process.env.SECRET_WORD,
-    cookieOptions: {
-      secure: false,
-    },
   }
-);
 
-const CreatePost = ({ user, isLogged }: Props) => {
+  return {
+    props: {
+      user: { email: resp.data.email },
+      isLogged: resp.data.isLogged,
+    },
+  };
+}
+
+const CreatePost = ({ user, isLogged }: any) => {
   const [error, setError] = useState(false);
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
@@ -62,30 +66,32 @@ const CreatePost = ({ user, isLogged }: Props) => {
       return;
     }
 
-    if (!user || !isLogged) {
+    if (!isLogged) {
       console.log("nao ta logado");
       return;
     }
 
-    const email = user.email;
-
     const data = {
       title: titulo,
       mensagem,
-      email,
-      category: category.toLowerCase(),
+      email: user.email,
+      category_id: parseInt(category),
     };
 
-    const resp = await fetch("/api/createPost", {
+    const resp: any = await axios.post("http://localhost:5000/create", data, {
+      withCredentials: true,
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
     });
 
-    const data2 = await resp.json();
-    console.log(data2);
+    // const resp = await fetch("/api/createPost", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(data),
+    // });
+
+    console.log(resp.data);
   };
 
   return (
@@ -101,17 +107,23 @@ const CreatePost = ({ user, isLogged }: Props) => {
         <div className="flex flex-col items-center justify-center">
           <label className="mb-2 text-lg">Choose a category:</label>
           <select className="dark:text-textLight" name="category">
-            <option value="general-discussion">General Discussion</option>
-            <option value="lore">Lore</option>
-            <option value="off-topic">Off-Topic</option>
-            <option value="news">News</option>
+            <option value="1">General Discussion</option>
+            <option value="2">support</option>
+            <option value="3">Off-Topic</option>
+            <option value="4">community</option>
           </select>
         </div>
 
         <div className="py-4 text-center">
           {error && <h2 className="text-error">Please enter all fields</h2>}
           {!isLogged && (
-            <h2 className="text-error">You must login to create a post</h2>
+            <h2 className="text-error">
+              You must{" "}
+              <span className="underline underline-offset-2">
+                <Link href="/login">login</Link>
+              </span>{" "}
+              to create a post
+            </h2>
           )}
         </div>
         <div>
@@ -135,6 +147,9 @@ const CreatePost = ({ user, isLogged }: Props) => {
           <button className="btn">Submit</button>
         </div>
       </form>
+      {/* <button className="btn" onClick={createNewPost}>
+        teste
+      </button> */}
     </div>
   );
 };
