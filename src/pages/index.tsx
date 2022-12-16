@@ -1,6 +1,4 @@
 import Head from "next/head";
-import cookie from "cookie";
-import axios from "axios";
 
 export default function Home() {
   return (

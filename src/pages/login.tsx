@@ -13,10 +13,8 @@ interface Data {
 
 export async function getServerSideProps({ req, res }: any) {
   const cookies = req.headers.cookie || "";
-  // const token = jwt.decode(cookies.split("=")[1]);
   const token = cookies.split("=")[1];
 
-  // const isValid = jwt.verify(cookies.split("=")[1])
   const resp: Data = await axios.post(
     "http://localhost:5000/verify-token",
     { token: token },
@@ -25,8 +23,6 @@ export async function getServerSideProps({ req, res }: any) {
       method: "POST",
     }
   );
-
-  console.log(resp.data);
 
   if (resp.data.isLogged) {
     console.log("daioshdoisahdiashdiasidhi");
@@ -42,7 +38,6 @@ export async function getServerSideProps({ req, res }: any) {
   return {
     props: {
       isLogged: resp.data.isLogged,
-      // isLogged: false,
     },
   };
 }
@@ -50,6 +45,7 @@ export async function getServerSideProps({ req, res }: any) {
 const Login = () => {
   const [error, setError] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [userNotFound, setUserNotFound] = useState(false);
 
   const darkModeAndCookie = useContext(Context);
 
@@ -75,26 +71,18 @@ const Login = () => {
     headers.append("Content-Type", "application/json");
     headers.append("Accept", "application/json");
 
-    // const resp = await fetch("http://localhost:5000/login", {
-    //   method: "POST",
-    //   mode: "cors",
-    //   // redirect: "follow",
-    //   credentials: "include", // Don't forget to specify this if you need cookies
-    //   headers: headers,
-    //   body: JSON.stringify(data),
-    // });
     const resp: any = await axios.post("http://localhost:5000/login", data, {
       withCredentials: true,
       method: "POST",
     });
 
-    if (resp.status === 200) {
+    if (resp.data.ok) {
       const changeHasCookie = darkModeAndCookie[3];
       changeHasCookie(true);
       router.push("/");
+    } else {
+      setUserNotFound(true);
     }
-
-    console.log(resp);
   };
 
   return (
@@ -107,6 +95,7 @@ const Login = () => {
 
       <h2 className="title mb-8">LOGIN</h2>
       {error && <h2 className="text-error">Email or Password Wrong</h2>}
+      {userNotFound && <h2 className="text-error">Email or Password Wrong</h2>}
       <form onSubmit={handleLogin}>
         <div>
           <input

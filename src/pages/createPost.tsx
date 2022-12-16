@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import cookie from "cookie";
 import axios from "axios";
-import jwt from "jsonwebtoken";
 import Link from "next/link";
 
 interface User {
@@ -82,16 +80,6 @@ const CreatePost = ({ user, isLogged }: any) => {
       withCredentials: true,
       method: "POST",
     });
-
-    // const resp = await fetch("/api/createPost", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(data),
-    // });
-
-    console.log(resp.data);
   };
 
   return (
@@ -147,9 +135,6 @@ const CreatePost = ({ user, isLogged }: any) => {
           <button className="btn">Submit</button>
         </div>
       </form>
-      {/* <button className="btn" onClick={createNewPost}>
-        teste
-      </button> */}
     </div>
   );
 };

@@ -1,9 +1,9 @@
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import Context from "../context/context";
 import { getCookie, deleteCookie } from "cookies-next";
+import { BsFillMoonStarsFill, BsFillSunFill } from "react-icons/bs";
 
 const Navbar = () => {
   const router = useRouter();
@@ -26,14 +26,14 @@ const Navbar = () => {
 
   const userLogout = () => {
     deleteCookie("tk", { path: "/" });
-    const changeHasCookie = darkModeAndCookie[3];
-    changeHasCookie(false);
+    // const changeHasCookie = darkModeAndCookie[3];
+    setHasCookie(false);
     router.push("/");
   };
 
   return (
     <div>
-      <ul className="flex justify-between px-24 pt-2">
+      <ul className="flex items-center justify-between px-24 pt-2">
         <li
           className={`hover:underline ${activeRoute == "" ? "underline" : ""}`}
         >
@@ -84,7 +84,7 @@ const Navbar = () => {
         )}
 
         <li className="cursor-pointer hover:underline" onClick={changeDarkMode}>
-          change {dark ? "dark" : "light"}
+          {dark ? <BsFillMoonStarsFill /> : <BsFillSunFill />}
         </li>
       </ul>
     </div>

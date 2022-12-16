@@ -3,8 +3,6 @@ import type { AppProps } from "next/app";
 import Navbar from "../components/Navbar";
 import Context from "../context/context";
 import { useState } from "react";
-import axios from "axios";
-import { atom } from "jotai";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [dark, setDark] = useState(true);

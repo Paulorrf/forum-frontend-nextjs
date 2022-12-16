@@ -36,8 +36,6 @@ const Register = () => {
     console.log(data2);
   };
 
-  // const cookies = parseCookies();
-
   return (
     <div className="center text-textLight">
       <Head>
